@@ -45,35 +45,11 @@ export default function App() {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [hasSelectedKey, setHasSelectedKey] = useState(false);
+  const [apiKey, setApiKey] = useState(() => localStorage.getItem('gemini_api_key') || '');
 
   useEffect(() => {
-    const checkKey = async () => {
-      // @ts-ignore - aistudio is injected by the environment
-      if (window.aistudio?.hasSelectedApiKey) {
-        // @ts-ignore
-        const selected = await window.aistudio.hasSelectedApiKey();
-        setHasSelectedKey(selected);
-      } else {
-        // If not running in AI Studio, assume true to not block development
-        setHasSelectedKey(true);
-      }
-    };
-    checkKey();
-  }, []);
-
-  const handleSelectKey = async () => {
-    try {
-      // @ts-ignore
-      if (window.aistudio?.openSelectKey) {
-        // @ts-ignore
-        await window.aistudio.openSelectKey();
-        setHasSelectedKey(true); // Assume success right away to avoid race condition
-      }
-    } catch (error) {
-      console.error("Error opening key selector:", error);
-    }
-  };
+    localStorage.setItem('gemini_api_key', apiKey);
+  }, [apiKey]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -124,15 +100,18 @@ export default function App() {
       return;
     }
 
-    if (!hasSelectedKey) {
-      toast.error("請先在右上角設定 API Key 以啟用高畫質 AI 生成功能。");
-      handleSelectKey();
+    const activeKey = apiKey || process.env.API_KEY || process.env.GEMINI_API_KEY;
+
+    if (!activeKey) {
+      toast.error("請先在右上角輸入您的 Gemini API Key 以啟用高畫質 AI 生成功能。");
+      const keyInput = document.getElementById('api-key-input');
+      if (keyInput) keyInput.focus();
       return;
     }
 
     setIsGenerating(true);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || process.env.GEMINI_API_KEY });
+      const ai = new GoogleGenAI({ apiKey: activeKey });
       const response = await ai.models.generateContent({
         model: 'gemini-3.1-flash-image-preview',
         contents: {
@@ -211,26 +190,30 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-[#1A1A1A] font-sans selection:bg-primary/20 pb-24 relative overflow-x-hidden">
-      {/* Top API Key Status - Made accessible on mobile */}
+      {/* Top API Key Status - Custom Text Input for external deployments */}
       <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10 flex items-center gap-2">
-        {!hasSelectedKey ? (
-          <Button variant="outline" size="sm" onClick={handleSelectKey} className="gap-1 sm:gap-2 bg-white/80 backdrop-blur-md border-primary/20 text-primary hover:bg-primary/5 rounded-full px-3 sm:px-4 shadow-sm text-xs sm:text-sm">
-            <KeyRound className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            <span className="hidden xs:inline">設定 API Key</span>
-            <span className="inline xs:hidden">設定 Key</span>
-          </Button>
-        ) : (
-          <>
-            <Button variant="outline" size="sm" onClick={handleSelectKey} className="gap-1 sm:gap-2 bg-green-50 hover:bg-green-100 border-green-200 text-green-700 rounded-full px-3 sm:px-4 shadow-sm transition-colors text-xs sm:text-sm">
-              <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500" />
-              <span className="hidden xs:inline">API Key 已連結</span>
-              <span className="inline xs:hidden">已連結</span>
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => setHasSelectedKey(false)} className="gap-1 bg-white/80 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-gray-500 border-gray-200 rounded-full px-2 sm:px-3 shadow-sm transition-colors" title="清除">
+        <div className="relative flex items-center shadow-sm">
+          <KeyRound className="absolute left-3 w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary opacity-60 z-10" />
+          <Input 
+            id="api-key-input"
+            type="password" 
+            placeholder="請輸入 Gemini API Key..." 
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            className="pl-9 h-9 sm:h-10 text-xs sm:text-sm w-[150px] sm:w-[220px] lg:w-[260px] rounded-full bg-white/90 backdrop-blur-md border-primary/20 focus-visible:ring-primary shadow-sm pr-9"
+          />
+          {apiKey && (
+            <Button 
+              size="icon" 
+              variant="ghost" 
+              className="absolute right-1 w-7 h-7 sm:w-8 sm:h-8 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-full" 
+              onClick={() => setApiKey('')}
+              title="清除 API Key"
+            >
               <Trash2 className="w-3.5 h-3.5" />
             </Button>
-          </>
-        )}
+          )}
+        </div>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 mt-12 sm:mt-0">
