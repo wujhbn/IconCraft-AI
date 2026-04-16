@@ -210,62 +210,63 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] text-[#1A1A1A] font-sans selection:bg-primary/20 pb-24 relative">
-      {/* Top Right API Key Status */}
-      <div className="absolute top-6 right-6 z-10 hidden sm:flex items-center gap-2">
+    <div className="min-h-screen bg-[#F8F9FA] text-[#1A1A1A] font-sans selection:bg-primary/20 pb-24 relative overflow-x-hidden">
+      {/* Top API Key Status - Made accessible on mobile */}
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10 flex items-center gap-2">
         {!hasSelectedKey ? (
-          <Button variant="outline" size="sm" onClick={handleSelectKey} className="gap-2 bg-white/80 backdrop-blur-md border-primary/20 text-primary hover:bg-primary/5 rounded-full px-4 shadow-sm">
-            <KeyRound className="w-4 h-4" />
-            設定 API Key
+          <Button variant="outline" size="sm" onClick={handleSelectKey} className="gap-1 sm:gap-2 bg-white/80 backdrop-blur-md border-primary/20 text-primary hover:bg-primary/5 rounded-full px-3 sm:px-4 shadow-sm text-xs sm:text-sm">
+            <KeyRound className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+            <span className="hidden xs:inline">設定 API Key</span>
+            <span className="inline xs:hidden">設定 Key</span>
           </Button>
         ) : (
           <>
-            <Button variant="outline" size="sm" onClick={handleSelectKey} className="gap-2 bg-green-50 hover:bg-green-100 border-green-200 text-green-700 rounded-full px-4 shadow-sm transition-colors">
-              <CheckCircle2 className="w-4 h-4 text-green-500" />
-              API Key 已連結
+            <Button variant="outline" size="sm" onClick={handleSelectKey} className="gap-1 sm:gap-2 bg-green-50 hover:bg-green-100 border-green-200 text-green-700 rounded-full px-3 sm:px-4 shadow-sm transition-colors text-xs sm:text-sm">
+              <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500" />
+              <span className="hidden xs:inline">API Key 已連結</span>
+              <span className="inline xs:hidden">已連結</span>
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setHasSelectedKey(false)} className="gap-1 bg-white/80 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-gray-500 border-gray-200 rounded-full px-3 shadow-sm transition-colors">
+            <Button variant="outline" size="sm" onClick={() => setHasSelectedKey(false)} className="gap-1 bg-white/80 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-gray-500 border-gray-200 rounded-full px-2 sm:px-3 shadow-sm transition-colors" title="清除">
               <Trash2 className="w-3.5 h-3.5" />
-              清除
             </Button>
           </>
         )}
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 py-12">
-        {/* Header - Matches Screenshot */}
-        <header className="mb-12 text-center">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 mt-12 sm:mt-0">
+        {/* Header */}
+        <header className="mb-8 sm:mb-12 text-center">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col items-center gap-6 mb-8"
+            className="flex flex-col items-center gap-4 sm:gap-6 mb-6 sm:mb-8"
           >
-            <div className="p-4 bg-white rounded-[24px] shadow-xl shadow-black/5 border border-black/5 relative">
-              <Sparkles className="w-10 h-10 text-primary" />
+            <div className="p-3 sm:p-4 bg-white rounded-[20px] sm:rounded-[24px] shadow-xl shadow-black/5 border border-black/5 relative">
+              <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
             </div>
-            <h1 className="text-4xl font-bold tracking-tight text-[#1A1A1A]">IconCraft AI</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#1A1A1A]">IconCraft AI</h1>
           </motion.div>
           
-          {/* Navigation Buttons - With Active State */}
-          <div className="flex justify-center gap-12 mb-12">
+          {/* Navigation Buttons */}
+          <div className="flex flex-row justify-center items-center gap-4 sm:gap-12 mb-8 sm:mb-12">
             <button 
               onClick={() => setActiveMode('upload')} 
-              className={`flex items-center gap-2 text-sm font-bold transition-all ${activeMode === 'upload' ? 'text-primary scale-110' : 'text-gray-500 hover:text-primary'}`}
+              className={`flex items-center gap-2 text-xs sm:text-sm font-bold transition-all p-3 sm:p-0 rounded-xl sm:rounded-none w-1/2 sm:w-auto justify-center ${activeMode === 'upload' ? 'bg-primary/5 sm:bg-transparent text-primary sm:scale-110' : 'text-gray-500 hover:text-primary'}`}
             >
-              <Upload className={`w-5 h-5 ${activeMode === 'upload' ? 'animate-bounce' : ''}`} />
+              <Upload className={`w-4 h-4 sm:w-5 sm:h-5 ${activeMode === 'upload' ? 'animate-bounce' : ''}`} />
               Upload & Process
             </button>
             <button 
               onClick={() => setActiveMode('generate')} 
-              className={`flex items-center gap-2 text-sm font-bold transition-all ${activeMode === 'generate' ? 'text-primary scale-110' : 'text-gray-500 hover:text-primary'}`}
+              className={`flex items-center gap-2 text-xs sm:text-sm font-bold transition-all p-3 sm:p-0 rounded-xl sm:rounded-none w-1/2 sm:w-auto justify-center ${activeMode === 'generate' ? 'bg-primary/5 sm:bg-transparent text-primary sm:scale-110' : 'text-gray-500 hover:text-primary'}`}
             >
-              <Sparkles className={`w-5 h-5 ${activeMode === 'generate' ? 'animate-pulse' : ''}`} />
+              <Sparkles className={`w-4 h-4 sm:w-5 sm:h-5 ${activeMode === 'generate' ? 'animate-pulse' : ''}`} />
               AI Generation
             </button>
           </div>
         </header>
 
-        <main className="space-y-16">
+        <main className="space-y-8 sm:space-y-16">
           <AnimatePresence mode="wait">
             {activeMode === 'upload' ? (
               <motion.section 
@@ -275,20 +276,20 @@ export default function App() {
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ duration: 0.3 }}
               >
-                <Card className="border-none shadow-2xl shadow-black/5 bg-white overflow-hidden rounded-[24px]">
+                <Card className="border-none shadow-2xl shadow-black/5 bg-white overflow-hidden rounded-[20px] sm:rounded-[24px]">
                   <CardHeader className="pb-2">
-                    <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-800">
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg font-bold text-gray-800">
                       <Upload className="w-5 h-5 text-primary" />
                       Manual Upload & Process
                     </CardTitle>
-                    <CardDescription className="text-gray-500">
+                    <CardDescription className="text-gray-500 text-xs sm:text-sm">
                       Upload your image to automatically remove background and generate icon sizes.
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="p-8">
+                  <CardContent className="p-4 sm:p-8">
                     <div 
                       onClick={() => fileInputRef.current?.click()}
-                      className="border-2 border-dashed border-gray-300 rounded-[20px] p-16 text-center cursor-pointer hover:border-primary/50 hover:bg-primary/[0.02] transition-all group relative"
+                      className="border-2 border-dashed border-gray-300 rounded-[16px] sm:rounded-[20px] p-8 sm:p-16 text-center cursor-pointer hover:border-primary/50 hover:bg-primary/[0.02] transition-all group relative min-h-[200px] flex flex-col justify-center"
                     >
                       <input 
                         type="file" 
@@ -353,35 +354,35 @@ export default function App() {
                 transition={{ duration: 0.3 }}
                 className="pt-8"
               >
-                <Card className="border-none shadow-2xl shadow-black/5 bg-white rounded-[24px] overflow-hidden">
+                <Card className="border-none shadow-2xl shadow-black/5 bg-white rounded-[20px] sm:rounded-[24px] overflow-hidden">
                   <CardHeader className="pb-4">
-                    <CardTitle className="flex items-center gap-2 text-lg font-bold text-gray-800">
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg font-bold text-gray-800">
                       <Sparkles className="w-5 h-5 text-primary" />
                       AI Icon Generation
                     </CardTitle>
-                    <CardDescription className="text-gray-500">
+                    <CardDescription className="text-gray-500 text-xs sm:text-sm">
                       Describe your ideal icon and we'll generate it in three sizes.
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="p-8 pt-0">
-                    <div className="relative flex items-center">
+                  <CardContent className="p-4 sm:p-8 pt-0">
+                    <div className="relative flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-0">
                       <Input 
                         id="prompt"
-                        placeholder="e.g. A minimalist golden dragon head, dark background, vector style" 
+                        placeholder="e.g. A minimalist golden dragon head..." 
                         value={prompt}
                         onChange={(e) => setPrompt(e.target.value)}
-                        className="h-20 rounded-[20px] text-lg px-8 pr-44 bg-gray-50 border-gray-200 focus-visible:ring-2 focus-visible:ring-primary shadow-inner text-gray-800 placeholder:text-gray-400"
+                        className="h-14 sm:h-20 rounded-[16px] sm:rounded-[20px] text-base sm:text-lg px-4 sm:px-8 sm:pr-44 bg-gray-50 border-gray-200 focus-visible:ring-2 focus-visible:ring-primary shadow-inner text-gray-800 placeholder:text-gray-400"
                         onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
                       />
                       <Button 
                         onClick={handleGenerate} 
                         disabled={isGenerating}
-                        className="absolute right-3 h-14 px-10 rounded-[16px] shadow-lg shadow-primary/20 text-md font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
+                        className="sm:absolute sm:right-3 h-[52px] sm:h-14 px-6 sm:px-10 rounded-[14px] sm:rounded-[16px] shadow-lg shadow-primary/20 text-sm sm:text-md font-bold transition-all hover:scale-[1.02] active:scale-[0.98] w-full sm:w-auto"
                       >
                         {isGenerating ? (
-                          <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                          <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin mr-2" />
                         ) : (
-                          <Sparkles className="w-5 h-5 mr-2" />
+                          <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                         )}
                         Generate
                       </Button>
@@ -417,17 +418,17 @@ export default function App() {
                   <Separator className="flex-1 opacity-50 border-gray-300" />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                   {SIZES.map((size) => (
-                    <Card key={size} className="border border-gray-100 shadow-xl bg-white group hover:translate-y-[-4px] transition-all duration-300 rounded-[24px]">
-                      <CardHeader className="pb-0 pt-6">
-                        <div className="flex flex-col items-center justify-center gap-1 mb-2">
-                          <span className="text-sm font-bold text-gray-700">Specification: {size}x{size}px</span>
-                          <Badge variant="outline" className="font-mono text-xs px-3 py-1 border-gray-200 bg-gray-50 text-gray-600">icon-{size}.png</Badge>
+                    <Card key={size} className="border border-gray-100 shadow-xl bg-white group hover:translate-y-[-4px] transition-all duration-300 rounded-[20px] sm:rounded-[24px]">
+                      <CardHeader className="pb-0 pt-4 sm:pt-6">
+                        <div className="flex flex-col items-center justify-center gap-1 sm:gap-2 mb-2">
+                          <span className="text-xs sm:text-sm font-bold text-gray-700">Specification: {size}x{size}px</span>
+                          <Badge variant="outline" className="font-mono text-[10px] sm:text-xs px-2 sm:px-3 py-1 border-gray-200 bg-gray-50 text-gray-600">icon-{size}.png</Badge>
                         </div>
                       </CardHeader>
-                      <CardContent className="flex flex-col items-center justify-center p-8 pt-4">
-                        <div className="relative bg-gray-50 rounded-[20px] p-6 border border-gray-100 mb-8 group-hover:shadow-inner transition-all w-full flex justify-center">
+                      <CardContent className="flex flex-col items-center justify-center p-4 sm:p-8 pt-2 sm:pt-4">
+                        <div className="relative bg-gray-50 rounded-[16px] sm:rounded-[20px] p-4 sm:p-6 border border-gray-100 mb-6 sm:mb-8 group-hover:shadow-inner transition-all w-full flex justify-center">
                           <img 
                             src={processedIcons[size]} 
                             alt={`${size}px icon`} 
