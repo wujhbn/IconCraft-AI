@@ -46,6 +46,7 @@ export default function App() {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [apiKey, setApiKey] = useState(() => localStorage.getItem('gemini_api_key') || '');
+  const [showApiKeyInput, setShowApiKeyInput] = useState(() => !localStorage.getItem('gemini_api_key'));
 
   useEffect(() => {
     localStorage.setItem('gemini_api_key', apiKey);
@@ -192,28 +193,59 @@ export default function App() {
     <div className="min-h-screen bg-[#F8F9FA] text-[#1A1A1A] font-sans selection:bg-primary/20 pb-24 relative overflow-x-hidden">
       {/* Top API Key Status - Custom Text Input for external deployments */}
       <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-10 flex items-center gap-2">
-        <div className="relative flex items-center shadow-sm">
-          <KeyRound className="absolute left-3 w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary opacity-60 z-10" />
-          <Input 
-            id="api-key-input"
-            type="password" 
-            placeholder="請輸入 Gemini API Key..." 
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            className="pl-9 h-9 sm:h-10 text-xs sm:text-sm w-[150px] sm:w-[220px] lg:w-[260px] rounded-full bg-white/90 backdrop-blur-md border-primary/20 focus-visible:ring-primary shadow-sm pr-9"
-          />
-          {apiKey && (
+        {showApiKeyInput ? (
+          <div className="relative flex items-center shadow-sm">
+            <KeyRound className="absolute left-3 w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary opacity-60 z-10" />
+            <Input 
+              id="api-key-input"
+              type="password" 
+              placeholder="請輸入 Gemini API Key..." 
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && apiKey.trim()) setShowApiKeyInput(false);
+              }}
+              className="pl-9 h-9 sm:h-10 text-xs sm:text-sm w-[180px] sm:w-[220px] lg:w-[260px] rounded-full bg-white/90 backdrop-blur-md border-primary/20 focus-visible:ring-primary shadow-sm pr-10"
+            />
+            {apiKey && (
+              <Button 
+                size="icon" 
+                variant="ghost" 
+                className="absolute right-1.5 w-6 h-6 sm:w-7 sm:h-7 bg-white hover:bg-green-50 text-gray-400 hover:text-green-600 rounded-full transition-colors shadow-sm border border-gray-100" 
+                onClick={() => setShowApiKeyInput(false)}
+                title="儲存並隱藏"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500" />
+              </Button>
+            )}
+          </div>
+        ) : (
+          <div className="flex items-center gap-1 sm:gap-2">
             <Button 
-              size="icon" 
-              variant="ghost" 
-              className="absolute right-1 w-7 h-7 sm:w-8 sm:h-8 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-full" 
-              onClick={() => setApiKey('')}
+              variant="outline" 
+              size="sm" 
+              onClick={() => setShowApiKeyInput(true)} 
+              className="gap-1 sm:gap-2 bg-green-50 hover:bg-green-100 border-green-200 text-green-700 rounded-full px-3 sm:px-4 shadow-sm transition-colors text-xs sm:text-sm auto-collapse-badge"
+              title="點選以修改 API Key"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-500" />
+              <span className="hidden xs:inline">API Key 已綁定</span>
+              <span className="inline xs:hidden">已綁定</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => {
+                setApiKey('');
+                setShowApiKeyInput(true);
+              }} 
+              className="gap-1 bg-white/80 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-gray-400 hover:border-red-300 rounded-full px-2 sm:px-3 shadow-sm transition-colors" 
               title="清除 API Key"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </Button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 mt-12 sm:mt-0">
